@@ -1,2 +1,2 @@
-# Personal-Finance-Tracker
-A comprehensive Personal Finance Tracker built in Python that helps users manage their income and expenses with data visualization and persistence. This intermediate-level project demonstrates object-oriented programming, data handling, file I/O, and data visualization using matplotlib.
+# Simple-Finance-Tracker
+A minimal command-line Finance Tracker in Python that helps track income and expenses with data persistence. Perfect for learning basic file I/O, data handling, and CLI interfaces.
