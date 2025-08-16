@@ -1,0 +1,98 @@
+import json
+from datetime import datetime
+
+class SimpleFinanceTracker:
+    def __init__(self, filename="expenses.json"):
+        self.filename = filename
+        self.transactions = self.load_data()
+    
+    def load_data(self):
+        try:
+            with open(self.filename, 'r') as f:
+                return json.load(f)
+        except FileNotFoundError:
+            return []
+    
+    def save_data(self):
+        with open(self.filename, 'w') as f:
+            json.dump(self.transactions, f, indent=2)
+    
+    def add_transaction(self, amount, description, t_type="expense"):
+        transaction = {
+            "date": datetime.now().strftime("%Y-%m-%d"),
+            "amount": float(amount),
+            "description": description,
+            "type": t_type  # "income" or "expense"
+        }
+        self.transactions.append(transaction)
+        self.save_data()
+        print(f"Added {t_type}: ${amount} - {description}")
+    
+    def get_balance(self):
+        income = sum(t["amount"] for t in self.transactions if t["type"] == "income")
+        expenses = sum(t["amount"] for t in self.transactions if t["type"] == "expense")
+        return income - expenses
+    
+    def show_summary(self):
+        if not self.transactions:
+            print("No transactions found!")
+            return
+        
+        income = sum(t["amount"] for t in self.transactions if t["type"] == "income")
+        expenses = sum(t["amount"] for t in self.transactions if t["type"] == "expense")
+        balance = income - expenses
+        
+        print(f"\n{'='*30}")
+        print("   FINANCIAL SUMMARY")
+        print(f"{'='*30}")
+        print(f"Total Income:  ${income:.2f}")
+        print(f"Total Expenses: ${expenses:.2f}")
+        print(f"Balance:       ${balance:.2f}")
+        print(f"{'='*30}")
+        
+        if balance >= 0:
+            print("✅ You're doing great!")
+        else:
+            print("⚠️ You're overspending!")
+    
+    def show_recent(self, limit=5):
+        print(f"\nLast {limit} transactions:")
+        recent = self.transactions[-limit:]
+        for t in recent:
+            sign = "+" if t["type"] == "income" else "-"
+            print(f"{t['date']}: {sign}${t['amount']:.2f} - {t['description']}")
+
+def main():
+    tracker = SimpleFinanceTracker()
+    
+    while True:
+        print("\n1. Add Income  2. Add Expense  3. View Summary")
+        print("4. Recent Transactions  5. Exit")
+        
+        choice = input("Choose option: ").strip()
+        
+        if choice == "1":
+            amount = input("Enter income amount: $")
+            desc = input("Description: ")
+            tracker.add_transaction(amount, desc, "income")
+        
+        elif choice == "2":
+            amount = input("Enter expense amount: $")
+            desc = input("Description: ")
+            tracker.add_transaction(amount, desc, "expense")
+        
+        elif choice == "3":
+            tracker.show_summary()
+        
+        elif choice == "4":
+            tracker.show_recent()
+        
+        elif choice == "5":
+            print("Goodbye!")
+            break
+        
+        else:
+            print("Invalid choice!")
+
+if __name__ == "__main__":
+    main()
